@@ -35,14 +35,22 @@ public class PdfLukija {
     private String studentNumber;
     
     public static void main(String[] args) throws FileNotFoundException, DocumentException {
-        
+        /*
+        * Pääohjelma
+        */
         String studentNumber = "266972";
         String fileName = "/Users/rasmuspasanen/Downloads/weboodiPasanen.pdf";
         
         //fileName tuodaan lopulta opiskelijanumerosta
         new PdfLukija().createNewPdfFile(studentNumber);
-        new PdfLukija().readExistingPdfFile(fileName);
-        System.out.println(fileName);
+        //siirretään tiedot PDF to String
+        String teksti;
+        teksti = new PdfLukija().readExistingPdfFile(fileName);
+        System.out.println(teksti);
+        //
+        new PdfLukija().parseStringOpiskelijanumero(teksti);
+        new PdfLukija().parseStringKurssinumero(teksti);
+        
         
         
 
@@ -69,8 +77,7 @@ public class PdfLukija {
     * R-kielellä luodaan metodi, joka siirtää PDF-tiedoston SQL-tauluun,
     * josta tiedot siirretään käsiteltäväksi Javaan.
     */
-    
-    public void readExistingPdfFile (String pdfFile){
+    public String readExistingPdfFile (String pdfFile){
         /*
         * https://www.programcreek.com/java-api-examples/?class=com.itextpdf.text.pdf.PdfReader&method=close
         * 1st Example from source
@@ -84,13 +91,15 @@ public class PdfLukija {
                     strategy = parser.processContent(i, new SimpleTextExtractionStrategy());
                     sb.append(strategy.getResultantText());
                     //tulostaa testiksi koko pdf-tiedoston sisällön
-                    System.out.println(sb.append((strategy.getResultantText())));
-                    //Tähän for silmukka, joka etsii kurssitunnisteet dokumentista
+                    //System.out.println(sb.append((strategy.getResultantText())));
                     
+                    //Tähän for silmukka, joka etsii kurssitunnisteet dokumentista
                 }
+                reader.close();
+                return sb.toString();
         }
         catch (IOException e) {
-            throw new IllegalArgumentException("Not able to read file " +pdfFile,e);
+            throw new IllegalArgumentException("Not able to read file " + pdfFile, e);
             
         }
     }
@@ -105,6 +114,16 @@ public class PdfLukija {
     //tämä metodi lukee pdf-tiedostossa olevat kurssinumerot ja arvosanat
     public static void readCredits (String fileName){
         /*PdfReader reader = new PdfReader();*/
+    }
+
+    private void parseStringKurssinumero(String teksti) {
+        //Ohjelma poistaa tekstistä kaiken ylimääräisen, paitsi kurssinumerot
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void parseStringOpiskelijanumero(String teksti) {
+        //Ohjelma poistaa tekstistä kaiken, paitsi opiskelijanumeron
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     
