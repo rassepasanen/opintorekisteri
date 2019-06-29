@@ -55,7 +55,6 @@ public class PdfLukija {
         System.out.println("Opiskelijanro lopuksi:");
         System.out.println(studentNumber);
         //
-        String opNro = new PdfLukija().parseStringOpiskelijanumero(teksti);
         new PdfLukija().parseStringKurssinumero(teksti);
         
         
@@ -118,13 +117,11 @@ public class PdfLukija {
         //Ohjelma poistaa tekstistä kaiken ylimääräisen, paitsi kurssinumerot
     }
 
-    private String parseStringOpiskelijanumero(String teksti) {
-        //Ohjelma poistaa tekstistä kaiken, paitsi opiskelijanumeron
-        //studentNumber = "0";
-        
-        return teksti;
-        
-    }
+    /*
+    * Seuraavat kaksi metodia (buildNumber ja parseStudentNumber) etsivät tekstistä
+    * kaikki numerot, jonka jälkeen etsivät numeroiden joukosta opiskelijanumeron.
+    * Molempia kutsutaan pääohjelmasta.
+    */
     private String buildNumber(String str) {
         StringBuilder strBuilder = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
