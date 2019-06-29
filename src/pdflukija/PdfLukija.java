@@ -38,7 +38,9 @@ public class PdfLukija {
         /*
         * Pääohjelma
         */
-        String studentNumber = "266972";
+        String studentNumber = "123456";
+        System.out.println("Opiskelijanro aluksi:");
+        System.out.println(studentNumber);
         String fileName = "/Users/rasmuspasanen/Downloads/weboodiPasanen.pdf";
         
         //fileName tuodaan lopulta opiskelijanumerosta
@@ -47,8 +49,13 @@ public class PdfLukija {
         String teksti;
         teksti = new PdfLukija().readExistingPdfFile(fileName);
         System.out.println(teksti);
+        String teksti2;
+        teksti2 = new PdfLukija().buildNumber(teksti);
+        studentNumber = new PdfLukija().parseStudentNumber(teksti2, studentNumber);
+        System.out.println("Opiskelijanro lopuksi:");
+        System.out.println(studentNumber);
         //
-        new PdfLukija().parseStringOpiskelijanumero(teksti);
+        String opNro = new PdfLukija().parseStringOpiskelijanumero(teksti);
         new PdfLukija().parseStringKurssinumero(teksti);
         
         
@@ -69,10 +76,12 @@ public class PdfLukija {
 }
     
     /* readExistingPdfFile() -toteutusvaihtoehdot:
+    * KÄYTÖSSÄ:
     * Tapa 1: (Helpompi, mutta hitaampi)
     * Luetaan PDF-tiedosto tekstimuotoon, jota karsitaan (mitä keinoja?), 
     * kunnes suoritettujen opintojen numerosarjat ovat tallella
-    *
+    * Metodi palauttaa PDF:n sisällön String muodossa
+    * EI KÄYTÖSSÄ:
     * Tapa 2: (Vaikeampi, mutta tehokkaampi)
     * R-kielellä luodaan metodi, joka siirtää PDF-tiedoston SQL-tauluun,
     * josta tiedot siirretään käsiteltäväksi Javaan.
@@ -103,27 +112,37 @@ public class PdfLukija {
             
         }
     }
-    
-    //metodi etsii dokumentista opiskelijanumeron
-    public void setStudentNumber(String num){
-        this.studentNumber = num;
-    }
-    public String getStudentNumber(){
-        return this.studentNumber;
-    }
-    //tämä metodi lukee pdf-tiedostossa olevat kurssinumerot ja arvosanat
-    public static void readCredits (String fileName){
-        /*PdfReader reader = new PdfReader();*/
-    }
 
-    private void parseStringKurssinumero(String teksti) {
+    private String parseStringKurssinumero(String teksti) {
+        return null;
         //Ohjelma poistaa tekstistä kaiken ylimääräisen, paitsi kurssinumerot
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private void parseStringOpiskelijanumero(String teksti) {
+    private String parseStringOpiskelijanumero(String teksti) {
         //Ohjelma poistaa tekstistä kaiken, paitsi opiskelijanumeron
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //studentNumber = "0";
+        
+        return teksti;
+        
+    }
+    private String buildNumber(String str) {
+        StringBuilder strBuilder = new StringBuilder();
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if(Character.isDigit(ch)) 
+                strBuilder.append(ch);
+            }
+        return strBuilder.toString();
+}
+    private String parseStudentNumber(String teksti2, String studentNumber){
+        
+        teksti2 = teksti2.substring(48);
+        System.out.println("Tekstin ensimmäiset numerot poistettu:");
+        System.out.println(teksti2);
+        studentNumber = teksti2.substring(0, 6);
+        System.out.println("Opiskelijanumero keskellä: ");
+        System.out.println(studentNumber);
+        return studentNumber;
     }
     
     
