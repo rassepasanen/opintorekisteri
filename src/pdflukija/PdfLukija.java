@@ -15,10 +15,16 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 /**
@@ -33,8 +39,11 @@ public class PdfLukija {
      * @throws com.itextpdf.text.DocumentException
      */
     private String studentNumber;
+    private ArrayList completedCourses;
+
     
-    public static void main(String[] args) throws FileNotFoundException, DocumentException {
+    
+    public static void main(String[] args) throws FileNotFoundException, DocumentException, IOException {
         /*
         * Pääohjelma
         */
@@ -45,22 +54,46 @@ public class PdfLukija {
         
         //fileName tuodaan lopulta opiskelijanumerosta
         new PdfLukija().createNewPdfFile(studentNumber);
+        
         //siirretään tiedot PDF to String
         String teksti;
         teksti = new PdfLukija().readExistingPdfFile(fileName);
-        System.out.println(teksti);
-        String teksti2;
-        teksti2 = new PdfLukija().buildNumber(teksti);
-        studentNumber = new PdfLukija().parseStudentNumber(teksti2, studentNumber);
-        System.out.println("Opiskelijanro lopuksi:");
-        System.out.println(studentNumber);
-        //
-        new PdfLukija().parseStringKurssinumero(teksti);
         
+        //Siirretään teksti (string) tekstitiedostoon
+        File temp = new File("temp.txt");
+        FileWriter fWriter = new FileWriter(temp);
+        fWriter.write(teksti);
+        fWriter.close();
         
+        //Haetaan tiedostosta opiskelijanumero
+        new PdfLukija().parseStudentNumber(temp);
+        new PdfLukija().parseCourseNumbers(temp);
+        
+        //Haetaan tiedostosta suoritettujen kurssien koodit
         
 
     }
+    public PdfLukija (){
+        //olio
+        
+    }
+
+    public String getStudentNumber() {
+        return studentNumber;
+    }
+
+    public void setStudentNumber(String studentNumber) {
+        this.studentNumber = studentNumber;
+    }
+    
+    public ArrayList getCompletedCourses() {
+        return completedCourses;
+    }
+
+    public void setCompletedCourses(ArrayList completedCourses) {
+        this.completedCourses = completedCourses;
+    }
+    
     //tämä metodi luo uuden pdf-tiedoston käsittelyssä olevalla opiskelijanumerolla
     public void createNewPdfFile (String fileName) throws FileNotFoundException, DocumentException{
         Document doc = new Document();
@@ -89,6 +122,7 @@ public class PdfLukija {
         /*
         * https://www.programcreek.com/java-api-examples/?class=com.itextpdf.text.pdf.PdfReader&method=close
         * 1st Example from source
+        * 
         */
         try {
             PdfReader reader = new PdfReader(pdfFile);
@@ -111,16 +145,9 @@ public class PdfLukija {
             
         }
     }
-
-    private String parseStringKurssinumero(String teksti) {
-        return null;
-        //Ohjelma poistaa tekstistä kaiken ylimääräisen, paitsi kurssinumerot
-    }
-
+    
     /*
-    * Seuraavat kaksi metodia (buildNumber ja parseStudentNumber) etsivät tekstistä
-    * kaikki numerot, jonka jälkeen etsivät numeroiden joukosta opiskelijanumeron.
-    * Molempia kutsutaan pääohjelmasta.
+    * Metodi poistaa stringistä kaikki kirjaimet
     */
     private String buildNumber(String str) {
         StringBuilder strBuilder = new StringBuilder();
@@ -131,16 +158,62 @@ public class PdfLukija {
             }
         return strBuilder.toString();
 }
-    private String parseStudentNumber(String teksti2, String studentNumber){
-        
-        teksti2 = teksti2.substring(48);
-        System.out.println("Tekstin ensimmäiset numerot poistettu:");
-        System.out.println(teksti2);
-        studentNumber = teksti2.substring(0, 6);
-        System.out.println("Opiskelijanumero keskellä: ");
-        System.out.println(studentNumber);
-        return studentNumber;
-    }
     
+    /*
+    * Metodi etsii tiedostosta opiskelijanumeron
+    */
+    private void parseStudentNumber(File temp) throws FileNotFoundException, IOException{
+        
+        String opiskelijanumero;
+        FileReader fr= new FileReader (temp);
+        BufferedReader br = new BufferedReader(fr);
+        int i = 0;
+        while (i < 14){
+            String str = br.readLine();
+            if (str.contains("Opiskelijanumero")){
+                System.out.println("Opiskelijanumero löytyy tältä riviltä");
+                opiskelijanumero = new PdfLukija().buildNumber(str);
+                System.out.println("opiskelijanumero: " + opiskelijanumero);
+                setStudentNumber(opiskelijanumero);
+                System.out.println (getStudentNumber());
+               //setteri opiskelijanumerolle, jonka arvoksi asetetaan opiskelijanumero
+                break;
+            }
+            else{i++;}
+        }
+        
+        
+    }
+   
+    /*
+    * Metodi muodostaa ArrayListan, johon syötetään kurssien koodit,
+    * poistamalla kirjaimet ja valitsemalla ne rivit, joihin jää 7 numeroa
+    * Metodi lukee tiedostoa ehdolla, ettei currentLine, eikä nextLine ole tyhjiä
+    */
+    private void parseCourseNumbers(File temp) throws FileNotFoundException, IOException {
+        ArrayList ar = new ArrayList();
+        FileReader fr = new FileReader (temp);
+        BufferedReader br = new BufferedReader(fr);
+        int count = 0;
+        for(String currentLine; (currentLine = br.readLine()) != null; ){
+            if (currentLine.contains("Tutkintoasetus")){
+                //do nothing
+            }
+            else{
+                currentLine = new PdfLukija().buildNumber(currentLine);
+                if (currentLine.length()==7){
+                
+                    count++;
+                    ar.add(currentLine);
+                }
+            }
+        }
+        System.out.println("Suoritetut kurssit: ");
+        System.out.println(ar);
+        System.out.println("Suoritettuja kursseja: " + count);
+        
+        setCompletedCourses(ar);
+
+    }
     
 }
