@@ -26,13 +26,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
 /**
  *
  * @author rasmuspasanen
  */
 public class PdfLukija {
-
     /**
      * @param args the command line arguments
      * @throws java.io.FileNotFoundException
@@ -40,9 +38,8 @@ public class PdfLukija {
      */
     private String studentNumber;
     private ArrayList completedCourses;
+    private String startingYear;
 
-    
-    
     public static void main(String[] args) throws FileNotFoundException, DocumentException, IOException {
         /*
         * Pääohjelma
@@ -51,49 +48,39 @@ public class PdfLukija {
         System.out.println("Opiskelijanro aluksi:");
         System.out.println(studentNumber);
         String fileName = "/Users/rasmuspasanen/Downloads/weboodiPasanen.pdf";
-        
         //fileName tuodaan lopulta opiskelijanumerosta
         new PdfLukija().createNewPdfFile(studentNumber);
-        
         //siirretään tiedot PDF to String
         String teksti;
         teksti = new PdfLukija().readExistingPdfFile(fileName);
-        
         //Siirretään teksti (string) tekstitiedostoon
         File temp = new File("temp.txt");
         FileWriter fWriter = new FileWriter(temp);
         fWriter.write(teksti);
         fWriter.close();
-        
-        //Haetaan tiedostosta opiskelijanumero
+        //Haetaan tiedostosta tietoja
         new PdfLukija().parseStudentNumber(temp);
+        new PdfLukija().parseStartingYear(temp);
         new PdfLukija().parseCourseNumbers(temp);
-        
-        //Haetaan tiedostosta suoritettujen kurssien koodit
-        
-
     }
-    public PdfLukija (){
-        //olio
-        
-    }
-
     public String getStudentNumber() {
         return studentNumber;
     }
-
     public void setStudentNumber(String studentNumber) {
         this.studentNumber = studentNumber;
     }
-    
     public ArrayList getCompletedCourses() {
         return completedCourses;
     }
-
     public void setCompletedCourses(ArrayList completedCourses) {
         this.completedCourses = completedCourses;
+    }  
+    public String getStartingYear() {
+        return startingYear;
     }
-    
+    public void setStartingYear(String startingYear) {
+        this.startingYear = startingYear;
+    }
     //tämä metodi luo uuden pdf-tiedoston käsittelyssä olevalla opiskelijanumerolla
     public void createNewPdfFile (String fileName) throws FileNotFoundException, DocumentException{
         Document doc = new Document();
@@ -105,8 +92,7 @@ public class PdfLukija {
         paragraph.add("");
         doc.add(paragraph);
         doc.close();
-}
-    
+} 
     /* readExistingPdfFile() -toteutusvaihtoehdot:
     * KÄYTÖSSÄ:
     * Tapa 1: (Helpompi, mutta hitaampi)
@@ -132,20 +118,15 @@ public class PdfLukija {
                 for (int i = 1; i <= reader.getNumberOfPages(); i++){
                     strategy = parser.processContent(i, new SimpleTextExtractionStrategy());
                     sb.append(strategy.getResultantText());
-                    //tulostaa testiksi koko pdf-tiedoston sisällön
-                    //System.out.println(sb.append((strategy.getResultantText())));
-                    
-                    //Tähän for silmukka, joka etsii kurssitunnisteet dokumentista
                 }
                 reader.close();
                 return sb.toString();
         }
         catch (IOException e) {
             throw new IllegalArgumentException("Not able to read file " + pdfFile, e);
-            
         }
     }
-    
+
     /*
     * Metodi poistaa stringistä kaikki kirjaimet
     */
@@ -158,12 +139,10 @@ public class PdfLukija {
             }
         return strBuilder.toString();
 }
-    
     /*
     * Metodi etsii tiedostosta opiskelijanumeron
     */
     private void parseStudentNumber(File temp) throws FileNotFoundException, IOException{
-        
         String opiskelijanumero;
         FileReader fr= new FileReader (temp);
         BufferedReader br = new BufferedReader(fr);
@@ -180,11 +159,8 @@ public class PdfLukija {
                 break;
             }
             else{i++;}
-        }
-        
-        
+        }    
     }
-   
     /*
     * Metodi muodostaa ArrayListan, johon syötetään kurssien koodit,
     * poistamalla kirjaimet ja valitsemalla ne rivit, joihin jää 7 numeroa
@@ -210,10 +186,23 @@ public class PdfLukija {
         }
         System.out.println("Suoritetut kurssit: ");
         System.out.println(ar);
-        System.out.println("Suoritettuja kursseja: " + count);
-        
+        System.out.println("Suoritettuja kursseja: " + count);     
         setCompletedCourses(ar);
-
     }
-    
+    /*
+    * Metodi etsii PDF-tiedostosta opintojen alkamisvuoden
+    */
+    private void parseStartingYear(File temp) throws FileNotFoundException, IOException {
+        FileReader fr = new FileReader (temp);
+        BufferedReader br = new BufferedReader(fr);
+        for (String currentLine; (currentLine = br.readLine()) != null;){
+            if (currentLine.contains("Kirjoilletulo")){
+                currentLine = new PdfLukija().buildNumber(currentLine);
+                currentLine = currentLine.substring(4);
+                System.out.println("Opinnot alkanut: " + currentLine);
+                //startingYear = currentLine;
+                setStartingYear(currentLine);
+            }
+        }
+    }
 }
