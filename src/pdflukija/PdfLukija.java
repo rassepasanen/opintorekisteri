@@ -37,35 +37,95 @@ public class PdfLukija {
      * @throws com.itextpdf.text.DocumentException
      */
     public PdfLukija() throws IOException{
-        String teksti = readExistingPdfFile("/Users/rasmuspasanen/Downloads/weboodiPasanen.pdf");
-        File temp = new File("temp.txt");
-        FileWriter fw = new FileWriter(temp);
-        fw.write(teksti);
-        fw.close();
-        parseStudentNumber(temp);
-        String infoStudentNumber = getStudentNumber();
-        parseCompletedCourses(temp);
-        ArrayList infoCompletedCourses = getCompletedCourses();
-        parseStartingYear(temp);
-        String infoStartingYear = getStartingYear();
-        System.out.println("Opiskelijan tiedot oliossa: ");
-        System.out.println("Opiskelijanumbero: "+infoStudentNumber);
-        System.out.println("Aloitusvuosi: "+infoStartingYear);
-        System.out.println("Suoritetut kurssit"+infoCompletedCourses);
+        try{
+            String teksti = readExistingPdfFile("/Users/rasmuspasanen/Downloads/weboodiPasanen.pdf");
+            File temp = new File("temp.txt");
+            FileWriter fw = new FileWriter(temp);
+            fw.write(teksti);
+            fw.close();
+            parseStudentNumber(temp);
+            String infoStudentNumber = getStudentNumber();
+            parseCompletedCourses(temp);
+            ArrayList infoCompletedCourses = getCompletedCourses();
+            parseStartingYear(temp);
+            temp.delete();
+            String infoStartingYear = getStartingYear();
+            System.out.println("Opiskelijan tiedot oliossa: ");
+            System.out.println("Opiskelijanumero: "+infoStudentNumber);
+            System.out.println("Aloitusvuosi: "+infoStartingYear);
+            System.out.println("Suoritetut kurssit"+infoCompletedCourses);
+            //Opinto-oppaan valinta
+            String opOp = null;
+            switch (Integer.parseInt(infoStartingYear)) {
+                case 2014:
+                    System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
+                    opOp = "opintoOpas2014.txt";
+                    varmistus = true;
+                    break;
+                case 2015:
+                    System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
+                    opOp = "opintoOpas2015.txt";
+                    varmistus = true;
+                    break;
+                case 2016:
+                    System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
+                    opOp = "opintoOpas2016.txt";
+                    varmistus = true;
+                    break;
+                case 2017:
+                    System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
+                    opOp = "opintoOpas2017.txt";
+                    varmistus = true;
+                    break;
+                case 2018:
+                    System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
+                    opOp = "opintoOpas2018.txt";
+                    varmistus = true;
+                    break;
+                case 2019:
+                    System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
+                    opOp = "opintoOpas2019.txt";
+                    varmistus = true;
+                    break;
+                
+            }
+            
+            try{
+                String opintoOpasTeksti = readExistingPdfFile(opOp);
+                File opintoOpasTemp = new File ("opintoOpas:" + infoStudentNumber+".txt");
+                FileWriter fw1 = new FileWriter(opintoOpasTemp);
+                fw.write(opintoOpasTeksti);
+                fw.close();
+                parseCompletedCourses(opintoOpasTemp);
+                ArrayList allCourses = getCompletedCourses();
+                setAllCourses(allCourses);
+                }
+            catch(Exception e){
+                System.out.println("Opinto-oppaan tiedostoa ei löytynyt.");
+            }
+            if (varmistus == true){
+                //Varmistetaan ja edetään uuden PDF luontiin
+                
+            }
+        }
+        catch(Exception e){
+            System.out.println("Opiskelijan suoritusotetta ei löytynyt.");
+        }
     }
     
     private String studentNumber;
-    private ArrayList completedCourses;
+    private ArrayList completedCourses, allCourses;
     private String startingYear;
+    private boolean varmistus = false;
 
     public static void main(String[] args) throws FileNotFoundException, DocumentException, IOException {
         /*
         * Pääohjelma
-        */
-        
+        */    
         PdfLukija pdfl = new PdfLukija();
         
     }
+    
     public String getStudentNumber() {
         return studentNumber;
     }
@@ -78,6 +138,12 @@ public class PdfLukija {
     public void setCompletedCourses(ArrayList completedCourses) {
         this.completedCourses = completedCourses;
     }  
+    public ArrayList getAllCourses(){
+        return allCourses;
+    }
+    public void setAllCourses(ArrayList allCourses){
+        this.allCourses = allCourses;
+    }
     public String getStartingYear() {
         return startingYear;
     }
@@ -110,8 +176,6 @@ public class PdfLukija {
     public String readExistingPdfFile (String pdfFile){
         /*
         * https://www.programcreek.com/java-api-examples/?class=com.itextpdf.text.pdf.PdfReader&method=close
-        * 1st Example from source
-        * 
         */
         try {
             PdfReader reader = new PdfReader(pdfFile);
@@ -129,7 +193,6 @@ public class PdfLukija {
             throw new IllegalArgumentException("Not able to read file " + pdfFile, e);
         }
     }
-
     /*
     * Metodi poistaa stringistä kaikki kirjaimet
     */
