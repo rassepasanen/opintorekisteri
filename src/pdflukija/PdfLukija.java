@@ -88,21 +88,25 @@ public class PdfLukija {
                     varmistus = true;
                     break;
             }
+            System.out.println(opOp);
+
             try{
                 String opintoOpasTeksti = readExistingPdfFile(opOp);
-                File opintoOpasTemp = new File ("opintoOpas:" + infoStudentNumber+".txt");
+                File opintoOpasTemp = new File ("temp2.txt");
                 FileWriter fw1 = new FileWriter(opintoOpasTemp);
-                fw.write(opintoOpasTeksti);
-                fw.close();
-                parseCompletedCourses(opintoOpasTemp);
-                ArrayList allCourses = getCompletedCourses();
-                setAllCourses(allCourses);
+                fw1.write(opintoOpasTeksti);
+                fw1.close();
+                //parseCompletedCourses(opintoOpasTemp);
+                //ArrayList allCourses = getCompletedCourses();
+                //setAllCourses(allCourses);
                 }
             catch(Exception e){
                 System.out.println("Opinto-oppaan tiedostoa ei löytynyt.");
             }
+            
             if (varmistus == true){
                 //Varmistetaan ja edetään uuden PDF luontiin 
+                
             }
         }
         catch(Exception e){
@@ -163,8 +167,8 @@ public class PdfLukija {
         * https://www.programcreek.com/java-api-examples/?class=com.itextpdf.text.pdf.PdfReader&method=close
         */
         try {
-            PdfReader reader = new PdfReader(pdfFile);
-            StringBuilder sb = new StringBuilder();
+                PdfReader reader = new PdfReader(pdfFile);
+                StringBuilder sb = new StringBuilder();
 		PdfReaderContentParser parser = new PdfReaderContentParser(reader);
 		TextExtractionStrategy strategy;
                 for (int i = 1; i <= reader.getNumberOfPages(); i++){
