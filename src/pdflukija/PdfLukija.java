@@ -36,6 +36,24 @@ public class PdfLukija {
      * @throws java.io.FileNotFoundException
      * @throws com.itextpdf.text.DocumentException
      */
+    public PdfLukija() throws IOException{
+        String teksti = readExistingPdfFile("/Users/rasmuspasanen/Downloads/weboodiPasanen.pdf");
+        File temp = new File("temp.txt");
+        FileWriter fw = new FileWriter(temp);
+        fw.write(teksti);
+        fw.close();
+        parseStudentNumber(temp);
+        String infoStudentNumber = getStudentNumber();
+        parseCompletedCourses(temp);
+        ArrayList infoCompletedCourses = getCompletedCourses();
+        parseStartingYear(temp);
+        String infoStartingYear = getStartingYear();
+        System.out.println("Opiskelijan tiedot oliossa: ");
+        System.out.println("Opiskelijanumbero: "+infoStudentNumber);
+        System.out.println("Aloitusvuosi: "+infoStartingYear);
+        System.out.println("Suoritetut kurssit"+infoCompletedCourses);
+    }
+    
     private String studentNumber;
     private ArrayList completedCourses;
     private String startingYear;
@@ -44,24 +62,9 @@ public class PdfLukija {
         /*
         * Pääohjelma
         */
-        String studentNumber = "123456";
-        System.out.println("Opiskelijanro aluksi:");
-        System.out.println(studentNumber);
-        String fileName = "/Users/rasmuspasanen/Downloads/weboodiPasanen.pdf";
-        //fileName tuodaan lopulta opiskelijanumerosta
-        new PdfLukija().createNewPdfFile(studentNumber);
-        //siirretään tiedot PDF to String
-        String teksti;
-        teksti = new PdfLukija().readExistingPdfFile(fileName);
-        //Siirretään teksti (string) tekstitiedostoon
-        File temp = new File("temp.txt");
-        FileWriter fWriter = new FileWriter(temp);
-        fWriter.write(teksti);
-        fWriter.close();
-        //Haetaan tiedostosta tietoja
-        new PdfLukija().parseStudentNumber(temp);
-        new PdfLukija().parseStartingYear(temp);
-        new PdfLukija().parseCourseNumbers(temp);
+        
+        PdfLukija pdfl = new PdfLukija();
+        
     }
     public String getStudentNumber() {
         return studentNumber;
@@ -150,11 +153,8 @@ public class PdfLukija {
         while (i < 14){
             String str = br.readLine();
             if (str.contains("Opiskelijanumero")){
-                System.out.println("Opiskelijanumero löytyy tältä riviltä");
-                opiskelijanumero = new PdfLukija().buildNumber(str);
-                System.out.println("opiskelijanumero: " + opiskelijanumero);
+                opiskelijanumero = buildNumber(str);
                 setStudentNumber(opiskelijanumero);
-                System.out.println (getStudentNumber());
                //setteri opiskelijanumerolle, jonka arvoksi asetetaan opiskelijanumero
                 break;
             }
@@ -166,7 +166,7 @@ public class PdfLukija {
     * poistamalla kirjaimet ja valitsemalla ne rivit, joihin jää 7 numeroa
     * Metodi lukee tiedostoa ehdolla, ettei currentLine, eikä nextLine ole tyhjiä
     */
-    private void parseCourseNumbers(File temp) throws FileNotFoundException, IOException {
+    private void parseCompletedCourses(File temp) throws FileNotFoundException, IOException {
         ArrayList ar = new ArrayList();
         FileReader fr = new FileReader (temp);
         BufferedReader br = new BufferedReader(fr);
@@ -176,17 +176,14 @@ public class PdfLukija {
                 //do nothing
             }
             else{
-                currentLine = new PdfLukija().buildNumber(currentLine);
+                currentLine = buildNumber(currentLine);
                 if (currentLine.length()==7){
                 
                     count++;
                     ar.add(currentLine);
                 }
             }
-        }
-        System.out.println("Suoritetut kurssit: ");
-        System.out.println(ar);
-        System.out.println("Suoritettuja kursseja: " + count);     
+        }  
         setCompletedCourses(ar);
     }
     /*
@@ -197,9 +194,8 @@ public class PdfLukija {
         BufferedReader br = new BufferedReader(fr);
         for (String currentLine; (currentLine = br.readLine()) != null;){
             if (currentLine.contains("Kirjoilletulo")){
-                currentLine = new PdfLukija().buildNumber(currentLine);
+                currentLine = buildNumber(currentLine);
                 currentLine = currentLine.substring(4);
-                System.out.println("Opinnot alkanut: " + currentLine);
                 //startingYear = currentLine;
                 setStartingYear(currentLine);
             }
