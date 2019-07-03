@@ -87,9 +87,7 @@ public class PdfLukija {
                     opOp = "opintoOpas2019.txt";
                     varmistus = true;
                     break;
-                
             }
-            
             try{
                 String opintoOpasTeksti = readExistingPdfFile(opOp);
                 File opintoOpasTemp = new File ("opintoOpas:" + infoStudentNumber+".txt");
@@ -104,15 +102,13 @@ public class PdfLukija {
                 System.out.println("Opinto-oppaan tiedostoa ei löytynyt.");
             }
             if (varmistus == true){
-                //Varmistetaan ja edetään uuden PDF luontiin
-                
+                //Varmistetaan ja edetään uuden PDF luontiin 
             }
         }
         catch(Exception e){
             System.out.println("Opiskelijan suoritusotetta ei löytynyt.");
         }
     }
-    
     private String studentNumber;
     private ArrayList completedCourses, allCourses;
     private String startingYear;
@@ -123,7 +119,6 @@ public class PdfLukija {
         * Pääohjelma
         */    
         PdfLukija pdfl = new PdfLukija();
-        
     }
     
     public String getStudentNumber() {
@@ -162,17 +157,7 @@ public class PdfLukija {
         doc.add(paragraph);
         doc.close();
 } 
-    /* readExistingPdfFile() -toteutusvaihtoehdot:
-    * KÄYTÖSSÄ:
-    * Tapa 1: (Helpompi, mutta hitaampi)
-    * Luetaan PDF-tiedosto tekstimuotoon, jota karsitaan (mitä keinoja?), 
-    * kunnes suoritettujen opintojen numerosarjat ovat tallella
-    * Metodi palauttaa PDF:n sisällön String muodossa
-    * EI KÄYTÖSSÄ:
-    * Tapa 2: (Vaikeampi, mutta tehokkaampi)
-    * R-kielellä luodaan metodi, joka siirtää PDF-tiedoston SQL-tauluun,
-    * josta tiedot siirretään käsiteltäväksi Javaan.
-    */
+
     public String readExistingPdfFile (String pdfFile){
         /*
         * https://www.programcreek.com/java-api-examples/?class=com.itextpdf.text.pdf.PdfReader&method=close
@@ -233,16 +218,11 @@ public class PdfLukija {
         ArrayList ar = new ArrayList();
         FileReader fr = new FileReader (temp);
         BufferedReader br = new BufferedReader(fr);
-        int count = 0;
         for(String currentLine; (currentLine = br.readLine()) != null; ){
-            if (currentLine.contains("Tutkintoasetus")){
-                //do nothing
-            }
+            if (currentLine.contains("Tutkintoasetus")); //do nothing
             else{
                 currentLine = buildNumber(currentLine);
                 if (currentLine.length()==7){
-                
-                    count++;
                     ar.add(currentLine);
                 }
             }
@@ -259,7 +239,6 @@ public class PdfLukija {
             if (currentLine.contains("Kirjoilletulo")){
                 currentLine = buildNumber(currentLine);
                 currentLine = currentLine.substring(4);
-                //startingYear = currentLine;
                 setStartingYear(currentLine);
             }
         }
