@@ -59,7 +59,7 @@ public class PdfLukija {
             switch (Integer.parseInt(infoStartingYear)) {
                 case 2014:
                     System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
-                    opOp = "opintoOpas2014.txt";
+                    opOp = "opintoOpas2014";
                     varmistus = true;
                     break;
                 case 2015:
@@ -87,28 +87,20 @@ public class PdfLukija {
                     opOp = "opintoOpas2019.txt";
                     varmistus = true;
                     break;
+                default:
+                    System.out.println("Eipä löydy opinto-opasta..");
+                    varmistus = false;
             }
             System.out.println(opOp);
+            String opintoOpasTeksti = readExistingPdfFile("/Users/rasmuspasanen/Downloads/"+opOp+".pdf");
+            File opintoOpasTemp = new File ("temp2.txt");
+            FileWriter fw1 = new FileWriter(opintoOpasTemp);
+            fw1.write(opintoOpasTeksti);
+            fw1.close();
+            parseMandatoryCourses(opintoOpasTemp);
+            ArrayList allCourses = getAllCourses();
+            }
 
-            try{
-                String opintoOpasTeksti = readExistingPdfFile(opOp);
-                File opintoOpasTemp = new File ("temp2.txt");
-                FileWriter fw1 = new FileWriter(opintoOpasTemp);
-                fw1.write(opintoOpasTeksti);
-                fw1.close();
-                //parseCompletedCourses(opintoOpasTemp);
-                //ArrayList allCourses = getCompletedCourses();
-                //setAllCourses(allCourses);
-                }
-            catch(Exception e){
-                System.out.println("Opinto-oppaan tiedostoa ei löytynyt.");
-            }
-            
-            if (varmistus == true){
-                //Varmistetaan ja edetään uuden PDF luontiin 
-                
-            }
-        }
         catch(Exception e){
             System.out.println("Opiskelijan suoritusotetta ei löytynyt.");
         }
@@ -246,5 +238,26 @@ public class PdfLukija {
                 setStartingYear(currentLine);
             }
         }
+    }
+    /*
+    * Metodia täytyy tarkentaa, kun tietokannassa löytyy PDF-jonka sisältöä on karsittu
+    * eli ei toimi vielä, kun syötteenä on koko opintoOpas2014
+    */
+    private void parseMandatoryCourses(File temp) throws FileNotFoundException, IOException {
+        ArrayList ar = new ArrayList();
+        FileReader fr = new FileReader (temp);
+        BufferedReader br = new BufferedReader(fr);
+        for(String currentLine; (currentLine = br.readLine()) != null; ){
+            if (currentLine.contains("Tutkintoasetus")); //do nothing
+            else{
+                currentLine = buildNumber(currentLine);
+                if (currentLine.length()>=7){
+                    currentLine = currentLine.substring(0,7);
+                    ar.add(currentLine);
+                }
+            }
+        }
+        System.out.println(ar);
+        setAllCourses(ar);
     }
 }
