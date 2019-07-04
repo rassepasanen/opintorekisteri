@@ -103,6 +103,7 @@ public class PdfLukija {
             opintoOpasTemp.delete();
             // etsitään puuttuvat kurssit
             missingCourses(allCourses,infoCompletedCourses);
+            System.out.println(missingCourses);
             }
 
         catch(Exception e){
@@ -265,10 +266,11 @@ public class PdfLukija {
     }
     /*
     * Tässä vertaillaan ArrayListojen sisältöä ja poistaa samankaltaisuudet listoista, jolloin
-    * jäljelle jää pakolliset kurssit, joita ei ole vielä suoritettu
+    * jäljelle jää pakolliset kurssit, joita ei ole vielä suoritettu (allCourses-infoCompletedCourses)
+    * 
     */
     private ArrayList missingCourses(ArrayList allCourses, ArrayList infoCompletedCourses){
-        
+        allCourses.removeAll(infoCompletedCourses);
         return missingCourses;
     }
 }
