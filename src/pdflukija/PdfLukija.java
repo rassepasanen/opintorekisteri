@@ -64,34 +64,35 @@ public class PdfLukija {
                     break;
                 case 2015:
                     System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
-                    opOp = "opintoOpas2015.txt";
+                    opOp = "opintoOpas2015";
                     varmistus = true;
                     break;
                 case 2016:
                     System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
-                    opOp = "opintoOpas2016.txt";
+                    opOp = "opintoOpas2016";
                     varmistus = true;
                     break;
                 case 2017:
                     System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
-                    opOp = "opintoOpas2017.txt";
+                    opOp = "opintoOpas2017";
                     varmistus = true;
                     break;
                 case 2018:
                     System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
-                    opOp = "opintoOpas2018.txt";
+                    opOp = "opintoOpas2018";
                     varmistus = true;
                     break;
                 case 2019:
                     System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
-                    opOp = "opintoOpas2019.txt";
+                    opOp = "opintoOpas2019";
                     varmistus = true;
                     break;
+                case 2020:
+                    System.out.println("Kyseiselle vuodelle ei ole vielä saatavilla opinto-opasta.");
                 default:
                     System.out.println("Eipä löydy opinto-opasta..");
                     varmistus = false;
             }
-            System.out.println(opOp);
             String opintoOpasTeksti = readExistingPdfFile("/Users/rasmuspasanen/Downloads/"+opOp+".pdf");
             File opintoOpasTemp = new File ("temp2.txt");
             FileWriter fw1 = new FileWriter(opintoOpasTemp);
@@ -100,14 +101,16 @@ public class PdfLukija {
             parseMandatoryCourses(opintoOpasTemp);
             ArrayList allCourses = getAllCourses();
             opintoOpasTemp.delete();
+            // etsitään puuttuvat kurssit
+            missingCourses(allCourses,infoCompletedCourses);
             }
 
         catch(Exception e){
-            System.out.println("Opiskelijan suoritusotetta ei löytynyt.");
+            System.out.println("Virhe.");
         }
     }
     private String studentNumber;
-    private ArrayList completedCourses, allCourses;
+    private ArrayList completedCourses, allCourses, missingCourses;
     private String startingYear;
     private boolean varmistus = false;
 
@@ -117,7 +120,6 @@ public class PdfLukija {
         */    
         PdfLukija pdfl = new PdfLukija();
     }
-    
     public String getStudentNumber() {
         return studentNumber;
     }
@@ -260,5 +262,13 @@ public class PdfLukija {
         }
         System.out.println(ar);
         setAllCourses(ar);
+    }
+    /*
+    * Tässä vertaillaan ArrayListojen sisältöä ja poistaa samankaltaisuudet listoista, jolloin
+    * jäljelle jää pakolliset kurssit, joita ei ole vielä suoritettu
+    */
+    private ArrayList missingCourses(ArrayList allCourses, ArrayList infoCompletedCourses){
+        
+        return missingCourses;
     }
 }
