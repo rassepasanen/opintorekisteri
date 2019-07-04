@@ -99,6 +99,7 @@ public class PdfLukija {
             fw1.close();
             parseMandatoryCourses(opintoOpasTemp);
             ArrayList allCourses = getAllCourses();
+            opintoOpasTemp.delete();
             }
 
         catch(Exception e){
