@@ -69,13 +69,24 @@ public class PdfLukija {
             System.out.println("All courses :"+allCourses);
             opintoOpasTemp.delete();
             //Parsing missing courses
-            missingCourses(allCourses,infoCompletedCourses);
-            System.out.println("Missing courses: "+missingCourses);
-            System.out.println(missingCourses);
+            missingCourses = missingCourses(allCourses,infoCompletedCourses);
+            missingCourses = getMissingCourses();
+            System.out.println("Missing courses: " + missingCourses);
+            
+            //Creating PDF-file, by name of the student number, to report all missing courses
+            createNewPdfFile(studentNumber);
             }
         catch(Exception e){
-            System.out.println(e + "Virhe.");
+            System.out.println(e + " Exeption.");
         }
+    }
+
+    public void setMissingCourses(ArrayList missingCourses) {
+        this.missingCourses = missingCourses;
+    }
+
+    public ArrayList getMissingCourses() {
+        return missingCourses;
     }
     //initializing variables
     private String studentNumber;
@@ -119,8 +130,12 @@ public class PdfLukija {
         PdfWriter.getInstance(doc, new FileOutputStream(fileName + ".pdf"));
         doc.open();
         Paragraph paragraph = new Paragraph();
-        paragraph.add("Moves credits to pdf file.");
-        paragraph.add("");
+        ArrayList list = getMissingCourses();
+        int i = 0;
+        while (list.size()>i){
+            paragraph.add((String) list.get(i));
+            i++;
+        }
         doc.add(paragraph);
         doc.close();
 } 
@@ -233,6 +248,9 @@ public class PdfLukija {
     */
     private ArrayList missingCourses(ArrayList allCourses, ArrayList infoCompletedCourses){
         allCourses.retainAll(infoCompletedCourses);
+        setMissingCourses(allCourses);
         return allCourses;
     }
+
+    
 }
