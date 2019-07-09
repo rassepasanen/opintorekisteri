@@ -37,6 +37,9 @@ public class PdfLukija {
      * @throws com.itextpdf.text.DocumentException
      */
     public PdfLukija() throws IOException{
+        /*
+        * Main constructor
+        */
         try{
             String teksti = readExistingPdfFile("/Users/rasmuspasanen/Downloads/weboodiPasanen.pdf");
             File temp = new File("temp.txt");
@@ -50,49 +53,12 @@ public class PdfLukija {
             parseStartingYear(temp);
             temp.delete();
             String infoStartingYear = getStartingYear();
-            System.out.println("Opiskelijan tiedot oliossa: ");
-            System.out.println("Opiskelijanumero: "+infoStudentNumber);
-            System.out.println("Aloitusvuosi: "+infoStartingYear);
-            System.out.println("Suoritetut kurssit"+infoCompletedCourses);
-            //Opinto-oppaan valinta
-            String opOp = null;
-            switch (Integer.parseInt(infoStartingYear)) {
-                case 2014:
-                    System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
-                    opOp = "opintoOpas2014";
-                    varmistus = true;
-                    break;
-                case 2015:
-                    System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
-                    opOp = "opintoOpas2015";
-                    varmistus = true;
-                    break;
-                case 2016:
-                    System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
-                    opOp = "opintoOpas2016";
-                    varmistus = true;
-                    break;
-                case 2017:
-                    System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
-                    opOp = "opintoOpas2017";
-                    varmistus = true;
-                    break;
-                case 2018:
-                    System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
-                    opOp = "opintoOpas2018";
-                    varmistus = true;
-                    break;
-                case 2019:
-                    System.out.println("Suorituksia verrataan vuoden "+infoStartingYear+" opinto-oppaaseen.");
-                    opOp = "opintoOpas2019";
-                    varmistus = true;
-                    break;
-                case 2020:
-                    System.out.println("Kyseiselle vuodelle ei ole vielä saatavilla opinto-opasta.");
-                default:
-                    System.out.println("Eipä löydy opinto-opasta..");
-                    varmistus = false;
-            }
+            System.out.println("Information: ");
+            System.out.println("Student number: "+infoStudentNumber);
+            System.out.println("Starting year: "+infoStartingYear);
+            System.out.println("Completed courses: "+infoCompletedCourses);
+            //Correct Study guide is handled here
+            String opOp = "OpintoOpas"+getStartingYear();
             String opintoOpasTeksti = readExistingPdfFile("/Users/rasmuspasanen/Downloads/"+opOp+".pdf");
             File opintoOpasTemp = new File ("temp2.txt");
             FileWriter fw1 = new FileWriter(opintoOpasTemp);
@@ -100,24 +66,25 @@ public class PdfLukija {
             fw1.close();
             parseMandatoryCourses(opintoOpasTemp);
             ArrayList allCourses = getAllCourses();
+            System.out.println("All courses :"+allCourses);
             opintoOpasTemp.delete();
-            // etsitään puuttuvat kurssit
+            //Parsing missing courses
             missingCourses(allCourses,infoCompletedCourses);
+            System.out.println("Missing courses: "+missingCourses);
             System.out.println(missingCourses);
             }
-
         catch(Exception e){
-            System.out.println("Virhe.");
+            System.out.println(e + "Virhe.");
         }
     }
+    //initializing variables
     private String studentNumber;
     private ArrayList completedCourses, allCourses, missingCourses;
     private String startingYear;
-    private boolean varmistus = false;
 
     public static void main(String[] args) throws FileNotFoundException, DocumentException, IOException {
         /*
-        * Pääohjelma
+        * Main program
         */    
         PdfLukija pdfl = new PdfLukija();
     }
@@ -145,7 +112,7 @@ public class PdfLukija {
     public void setStartingYear(String startingYear) {
         this.startingYear = startingYear;
     }
-    //tämä metodi luo uuden pdf-tiedoston käsittelyssä olevalla opiskelijanumerolla
+    //Method creates new PDF-file by the name of current Student Number
     public void createNewPdfFile (String fileName) throws FileNotFoundException, DocumentException{
         Document doc = new Document();
         doc.setPageSize(PageSize.A4);
@@ -160,7 +127,8 @@ public class PdfLukija {
 
     public String readExistingPdfFile (String pdfFile){
         /*
-        * https://www.programcreek.com/java-api-examples/?class=com.itextpdf.text.pdf.PdfReader&method=close
+        *reading existing PdfFile by using itext-library
+        *
         */
         try {
                 PdfReader reader = new PdfReader(pdfFile);
@@ -179,7 +147,7 @@ public class PdfLukija {
         }
     }
     /*
-    * Metodi poistaa stringistä kaikki kirjaimet
+    * Parsing String from anything but numbers
     */
     private String buildNumber(String str) {
         StringBuilder strBuilder = new StringBuilder();
@@ -191,7 +159,7 @@ public class PdfLukija {
         return strBuilder.toString();
 }
     /*
-    * Metodi etsii tiedostosta opiskelijanumeron
+    * Method parsing Student number from temp.txt file created from PDF
     */
     private void parseStudentNumber(File temp) throws FileNotFoundException, IOException{
         String opiskelijanumero;
@@ -203,16 +171,14 @@ public class PdfLukija {
             if (str.contains("Opiskelijanumero")){
                 opiskelijanumero = buildNumber(str);
                 setStudentNumber(opiskelijanumero);
-               //setteri opiskelijanumerolle, jonka arvoksi asetetaan opiskelijanumero
                 break;
             }
             else{i++;}
-        }    
+        }
     }
     /*
-    * Metodi muodostaa ArrayListan, johon syötetään kurssien koodit,
-    * poistamalla kirjaimet ja valitsemalla ne rivit, joihin jää 7 numeroa
-    * Metodi lukee tiedostoa ehdolla, ettei currentLine, eikä nextLine ole tyhjiä
+    * Method parsing Completed courses from temp.txt file created from PDF,
+    * to ArrayList setted to setCompletedCourses()
     */
     private void parseCompletedCourses(File temp) throws FileNotFoundException, IOException {
         ArrayList ar = new ArrayList();
@@ -230,7 +196,7 @@ public class PdfLukija {
         setCompletedCourses(ar);
     }
     /*
-    * Metodi etsii PDF-tiedostosta opintojen alkamisvuoden
+    * Method parsing Starting Year from temp.txt file created from PDF
     */
     private void parseStartingYear(File temp) throws FileNotFoundException, IOException {
         FileReader fr = new FileReader (temp);
@@ -244,8 +210,7 @@ public class PdfLukija {
         }
     }
     /*
-    * Metodia täytyy tarkentaa, kun tietokannassa löytyy PDF-jonka sisältöä on karsittu
-    * eli ei toimi vielä, kun syötteenä on koko opintoOpas2014
+    * Method parses Mandartory Courses from temp text-file, named by the starting year of studies
     */
     private void parseMandatoryCourses(File temp) throws FileNotFoundException, IOException {
         ArrayList ar = new ArrayList();
@@ -253,7 +218,7 @@ public class PdfLukija {
         BufferedReader br = new BufferedReader(fr);
         for(String currentLine; (currentLine = br.readLine()) != null; ){
             if (currentLine.contains("Tutkintoasetus")); //do nothing
-            else{
+            else {
                 currentLine = buildNumber(currentLine);
                 if (currentLine.length()>=7){
                     currentLine = currentLine.substring(0,7);
@@ -261,16 +226,13 @@ public class PdfLukija {
                 }
             }
         }
-        System.out.println(ar);
         setAllCourses(ar);
     }
     /*
-    * Tässä vertaillaan ArrayListojen sisältöä ja poistaa samankaltaisuudet listoista, jolloin
-    * jäljelle jää pakolliset kurssit, joita ei ole vielä suoritettu (allCourses-infoCompletedCourses)
-    * 
+    * Comparement of ArrayLists to parse all mandatory courses that student is yet to complete
     */
     private ArrayList missingCourses(ArrayList allCourses, ArrayList infoCompletedCourses){
-        allCourses.removeAll(infoCompletedCourses);
-        return missingCourses;
+        allCourses.retainAll(infoCompletedCourses);
+        return allCourses;
     }
 }
