@@ -60,18 +60,18 @@ public class PdfLukija {
             System.out.println("Starting year: "+infoStartingYear);
             System.out.println("Completed courses: "+infoCompletedCourses);
             //Correct Study guide is handled here
-            String opOp = "OpintoOpas"+getStartingYear();
-            String opintoOpasTeksti = readExistingPdfFile("/Users/rasmuspasanen/Downloads/pakolliset kurssit/"+opOp+".pdf");
-            File opintoOpasTemp = new File ("temp2.txt");
-            FileWriter fw1 = new FileWriter(opintoOpasTemp);
-            fw1.write(opintoOpasTeksti);
+            String studentGuide = "OpintoOpas"+getStartingYear();
+            String studentGuideText = readExistingPdfFile("/Users/rasmuspasanen/Downloads/pakolliset kurssit/"+studentGuide+".pdf");
+            File StudentGuideTemp = new File ("temp2.txt");
+            FileWriter fw1 = new FileWriter(StudentGuideTemp);
+            fw1.write(studentGuideText);
             fw1.close();
-            parseMandatoryCourses(opintoOpasTemp);
-            ArrayList allCourses = getAllCourses();
-            System.out.println("All courses :"+allCourses);
-            opintoOpasTemp.delete();
+            parseMandatoryCourses(StudentGuideTemp);
+            ArrayList allMandatoryCourses = getAllMandatoryCourses();
+            System.out.println("All mandatory courses :"+allMandatoryCourses);
+            StudentGuideTemp.delete();
             //Parsing missing courses
-            missingCourses = missingCourses(allCourses,infoCompletedCourses);
+            missingCourses = missingCourses(allMandatoryCourses,infoCompletedCourses);
             missingCourses = getMissingCourses();
             System.out.println("Missing courses: " + missingCourses);
             
@@ -113,7 +113,7 @@ public class PdfLukija {
     public void setCompletedCourses(ArrayList completedCourses) {
         this.completedCourses = completedCourses;
     }  
-    public ArrayList getAllCourses(){
+    public ArrayList getAllMandatoryCourses(){
         return allCourses;
     }
     public void setAllCourses(ArrayList allCourses){
@@ -248,21 +248,15 @@ public class PdfLukija {
     /*
     * Comparement of ArrayLists to parse all mandatory courses that student is yet to complete
     */
-    private ArrayList missingCourses(ArrayList allCourses, ArrayList infoCompletedCourses){
+    private ArrayList missingCourses(ArrayList allMandatoryCourses, ArrayList infoCompletedCourses){
         
-        allCourses.retainAll(infoCompletedCourses);
-        setMissingCourses(allCourses);
+        allMandatoryCourses.retainAll(infoCompletedCourses);
+        setMissingCourses(allMandatoryCourses);
         /*
         * TODO
-        * Listat järjestetään
-        * suoritetuista kursseista poistetaan kaikki alkiot, jotka ei kuulu allCourses:iin
-        * 
-        * Kurssien taulukot on järjestettävä ennen retainAll:in käyttöä
-        * 
-        * huomioi kielikurssien eri koodit joensuu vs kuopio (hyväksy jos toinen löytyy)
-        * 362 alkuiset kurssit ovat pääaineen pakollisia kursseja
+        * 1. infoCompletedCourses() poistetaan ne, jotka ei kuulu allMandatoryCourses()
+        * 2. allMandatoryCourses() poistetaan infoCompletedCourses() jääneet alkiot, jolloin jäljelle jää suorittamattomat pakolliset
         */
-        
-        return allCourses;
+        return allMandatoryCourses;
     }
 }
