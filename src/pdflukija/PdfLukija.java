@@ -25,6 +25,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -59,7 +61,7 @@ public class PdfLukija {
             System.out.println("Completed courses: "+infoCompletedCourses);
             //Correct Study guide is handled here
             String opOp = "OpintoOpas"+getStartingYear();
-            String opintoOpasTeksti = readExistingPdfFile("/Users/rasmuspasanen/Downloads/"+opOp+".pdf");
+            String opintoOpasTeksti = readExistingPdfFile("/Users/rasmuspasanen/Downloads/pakolliset kurssit/"+opOp+".pdf");
             File opintoOpasTemp = new File ("temp2.txt");
             FileWriter fw1 = new FileWriter(opintoOpasTemp);
             fw1.write(opintoOpasTeksti);
@@ -247,10 +249,20 @@ public class PdfLukija {
     * Comparement of ArrayLists to parse all mandatory courses that student is yet to complete
     */
     private ArrayList missingCourses(ArrayList allCourses, ArrayList infoCompletedCourses){
+        
         allCourses.retainAll(infoCompletedCourses);
         setMissingCourses(allCourses);
+        /*
+        * TODO
+        * Listat järjestetään
+        * suoritetuista kursseista poistetaan kaikki alkiot, jotka ei kuulu allCourses:iin
+        * 
+        * Kurssien taulukot on järjestettävä ennen retainAll:in käyttöä
+        * 
+        * huomioi kielikurssien eri koodit joensuu vs kuopio (hyväksy jos toinen löytyy)
+        * 362 alkuiset kurssit ovat pääaineen pakollisia kursseja
+        */
+        
         return allCourses;
     }
-
-    
 }
