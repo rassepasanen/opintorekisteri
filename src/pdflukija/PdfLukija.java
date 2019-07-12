@@ -250,13 +250,13 @@ public class PdfLukija {
     * Comparement of ArrayLists to parse all mandatory courses that student is yet to complete
     */
     private ArrayList missingCourses(ArrayList allMandatoryCourses, ArrayList infoCompletedCourses){
-        
+        //rivit 254 ja 255 voi kommentoida pois kun alkaa rakentamaan
         allMandatoryCourses.retainAll(infoCompletedCourses);
         setMissingCourses(allMandatoryCourses);
         /*
         * TODO
-        * 1. infoCompletedCourses() poistetaan ne, jotka ei kuulu allMandatoryCourses()
-        * 2. allMandatoryCourses() poistetaan infoCompletedCourses() jääneet alkiot, jolloin jäljelle jää suorittamattomat pakolliset
+        * 1. infoCompletedCourses poistetaan ne, jotka ei kuulu allMandatoryCourses()
+        * 2. allMandatoryCourses poistetaan infoCompletedCourses() jääneet alkiot, jolloin jäljelle jää suorittamattomat pakolliset
         */
         return allMandatoryCourses;
     }
