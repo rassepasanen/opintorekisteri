@@ -135,11 +135,11 @@ public class PdfLukija {
         ArrayList list = getMissingCourses();
         int i = 0;
         while (list.size()>i){
-            paragraph.add((String) list.get(i));
-            doc.add(paragraph);
+            paragraph.add((String) list.get(i)+"\n");
+            //doc.add(paragraph);
             i++;
         }
-        //doc.add(paragraph);
+        doc.add(paragraph);
         doc.close();
 } 
 
