@@ -1,0 +1,53 @@
+private ArrayList missingCourses(ArrayList<String> allCourses, ArrayList<String> infoCompletedCourses){
+	// as there was no specification for differentiating between joensuu and kuopio this time, those parts are skipped, if however such functionality was going to be added,
+	//this specific method would require either an arraylist containing all the location specific courses and comparing the current looked course directly to it.
+
+	//dummies for comparison use
+	String Tester1 = ("dummy");
+	String Tester2 = ("dummy");
+	//if you don't want to completely butcher the current allcourses and instead want to preserve the current allcourses list(if you use this then switch all the allCourses mentions below into MissingCourses
+	//ArrayList<String> MissingCourses =  (ArrayList<String>) allCourses.clone();
+	
+	
+	
+	
+	
+	
+	// completed courses step by step comparison
+	for(int i = 0; i <= infoCompletedCourses.size(); i++) {
+		//if the above method specifications does not specify string arraylists...
+		
+		//Tester1 = (String) infoCompletedCourses.get(i);
+		//otherwise:
+		Tester1 = infoCompletedCourses.get(i);
+		
+		//infoCompletedCourses step by step comparison part
+		for (int j =0; j <=allCourses.size(); j++) {
+			//same as above tester:
+			//Tester2 = (String) allCourses.get(i);
+		
+			Tester2 = allCourses.get(j);
+			
+			//if the 2 string values match:
+			if (Tester1.equals(Tester2)) {
+				//remove the specific course from allCourses arraylist(which i assume is the all mandatory courses arraylist)
+				allCourses.remove(i);
+					//because the remove function puts everything in the arraylist after removing a piece the rest back by 1 block, the for loop has to stay on the same spot on the next loop in order to not skip a value, thus the -1.
+				// possible issues could be going into negatives on the next loop if i remeber wrongly on how for loop worked (again cannot test this myself so just keep this in mind)
+					i =i-1;
+				}
+				//here it should either be break or continue
+				//(can't remember which one did what exactly, but the objective here would be to stop the current loop and return to the first for part (i part). Just switch to break if this one did not work)
+				break;
+			}
+			
+		}
+	//could be replaced with the Missing courses arraylist, if preserving allcourses list is needed.
+	setMissingCourses(allCourses);
+	return allCourses;
+			
+		
+	}
+	
+}
+	
