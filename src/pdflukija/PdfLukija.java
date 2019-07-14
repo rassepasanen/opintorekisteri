@@ -38,6 +38,17 @@ public class PdfLukija {
      * @throws java.io.FileNotFoundException
      * @throws com.itextpdf.text.DocumentException
      */
+    //initializing variables
+    private String studentNumber;
+    private ArrayList completedCourses, allCourses, missingCourses;
+    private String startingYear;
+
+    public static void main(String[] args) throws FileNotFoundException, DocumentException, IOException {
+        /*
+        * Main program
+        */    
+        PdfLukija pdfl = new PdfLukija();
+    }
     public PdfLukija() throws IOException{
         /*
         * Main constructor
@@ -83,24 +94,12 @@ public class PdfLukija {
             System.out.println(e + " Exeption.");
         }
     }
-
     public void setMissingCourses(ArrayList missingCourses) {
         this.missingCourses = missingCourses;
     }
 
     public ArrayList getMissingCourses() {
         return missingCourses;
-    }
-    //initializing variables
-    private String studentNumber;
-    private ArrayList completedCourses, allCourses, missingCourses;
-    private String startingYear;
-
-    public static void main(String[] args) throws FileNotFoundException, DocumentException, IOException {
-        /*
-        * Main program
-        */    
-        PdfLukija pdfl = new PdfLukija();
     }
     public String getStudentNumber() {
         return studentNumber;
@@ -265,7 +264,7 @@ public class PdfLukija {
             if (allMandatoryCourses.contains(infoCompletedCourses.get(i))){
                 System.out.println(infoCompletedCourses.get(i)+" is found in both and leaved untouched");}
             else {
-                System.out.println(infoCompletedCourses.get(i)+" is removed");
+                System.out.println(infoCompletedCourses.get(i)+" is removed in the first loop");
                 infoCompletedCourses.remove(i);
                 
             }
@@ -274,14 +273,13 @@ public class PdfLukija {
         for (int j = 0; j < allMandatoryCourses.size(); j++){
             if (infoCompletedCourses.contains(allMandatoryCourses.get(j))){
                 allMandatoryCourses.remove(j);
-                System.out.println(allMandatoryCourses.get(j)+" is removed in second loop.");
+                System.out.println(allMandatoryCourses.get(j)+" is removed in the second loop.");
             }
             else {
                 missingOnes.add(allMandatoryCourses.get(j));
             }
         }
-        System.out.println("allMandatoryCourses: " + allMandatoryCourses);
-        System.out.println("missingOnes: "+ missingOnes);   
+        setMissingCourses(missingOnes);
 	return missingOnes;
     }
 }
