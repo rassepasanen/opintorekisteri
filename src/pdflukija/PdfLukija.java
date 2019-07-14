@@ -248,11 +248,6 @@ public class PdfLukija {
     * Comparement of ArrayLists to parse all mandatory courses that student is yet to complete
     */
     private ArrayList missingCourses(ArrayList allMandatoryCourses, ArrayList infoCompletedCourses){
-        /*
-        * TODO
-        * 1. infoCompletedCourses poistetaan ne, jotka ei kuulu allMandatoryCourses()
-        * 2. allMandatoryCourses poistetaan infoCompletedCourses() jääneet alkiot, jolloin jäljelle jää suorittamattomat pakolliset
-        */
         //Loop deletes all but mandatory courses from infoCompletedCourses
         ArrayList missingOnes = new ArrayList();
         for (int i = 0; i < infoCompletedCourses.size(); i++){
@@ -263,8 +258,9 @@ public class PdfLukija {
                 infoCompletedCourses.remove(i);
                 
             }
-            //infoCompletedCOurses sisältää vain pakollisia suoritettuja kursseja
+            //infoCompletedCOurses now contains only mandatory and completed courses
         }
+        //Loop adds elements to missingOnes, if they are contained only in allMandatoryCourses
         for (int j = 0; j < allMandatoryCourses.size(); j++){
             if (infoCompletedCourses.contains(allMandatoryCourses.get(j))){
                 allMandatoryCourses.remove(j);
