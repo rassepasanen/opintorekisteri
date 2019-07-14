@@ -1,3 +1,4 @@
+// Added a specifications that the specific arraylists are string based, but it might not be necessary so just remove the <string> parts if they are not needed
 private ArrayList missingCourses(ArrayList<String> allCourses, ArrayList<String> infoCompletedCourses){
 	// as there was no specification for differentiating between joensuu and kuopio this time, those parts are skipped, if however such functionality was going to be added,
 	//this specific method would require either an arraylist containing all the location specific courses and comparing the current looked course directly to it.
@@ -32,22 +33,19 @@ private ArrayList missingCourses(ArrayList<String> allCourses, ArrayList<String>
 			if (Tester1.equals(Tester2)) {
 				//remove the specific course from allCourses arraylist(which i assume is the all mandatory courses arraylist)
 				allCourses.remove(i);
-					//because the remove function puts everything in the arraylist after removing a piece the rest back by 1 block, the for loop has to stay on the same spot on the next loop in order to not skip a value, thus the -1.
-				// possible issues could be going into negatives on the next loop if i remeber wrongly on how for loop worked (again cannot test this myself so just keep this in mind)
-					i =i-1;
+				//stop the current loop as the specified value was found
+					break;
 				}
-				//here it should either be break or continue
-				//(can't remember which one did what exactly, but the objective here would be to stop the current loop and return to the first for part (i part). Just switch to break if this one did not work)
-				break;
+				
 			}
 			
 		}
-	//could be replaced with the Missing courses arraylist, if preserving allcourses list is needed.
 	setMissingCourses(allCourses);
 	return allCourses;
 			
 		
 	}
-	
 }
+	
+	
 	
