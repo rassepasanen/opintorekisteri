@@ -253,9 +253,9 @@ public class PdfLukija {
         ArrayList missingOnes = new ArrayList();
         for (int i = 0; i < infoCompletedCourses.size(); i++){
             if (allMandatoryCourses.contains(infoCompletedCourses.get(i))){
-                System.out.println(infoCompletedCourses.get(i)+" is found in both and leaved untouched");}
+                System.out.println(infoCompletedCourses.get(i)+" is found in both and leaved untouched.");}
             else {
-                System.out.println(infoCompletedCourses.get(i)+" is removed in the first loop");
+                System.out.println(infoCompletedCourses.get(i)+" is removed in the first loop.");
                 infoCompletedCourses.remove(i);
                 
             }
