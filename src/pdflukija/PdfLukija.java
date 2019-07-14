@@ -251,23 +251,23 @@ public class PdfLukija {
     private ArrayList missingCourses(ArrayList allMandatoryCourses, ArrayList infoCompletedCourses){
         //Loop deletes all but mandatory courses from infoCompletedCourses
         ArrayList missingOnes = new ArrayList();
+        ArrayList completedMandatoryOnes = new ArrayList();
         for (int i = 0; i < infoCompletedCourses.size(); i++){
             if (allMandatoryCourses.contains(infoCompletedCourses.get(i))){
-                System.out.println(infoCompletedCourses.get(i)+" is found in both and leaved untouched.");}
-            else {
-                System.out.println(infoCompletedCourses.get(i)+" is removed in the first loop.");
-                infoCompletedCourses.remove(i);
-                
+                System.out.println(infoCompletedCourses.get(i)+" is found in both and leaved untouched.");
+                completedMandatoryOnes.add(infoCompletedCourses.get(i));
             }
-            //infoCompletedCOurses now contains only mandatory and completed courses
+            else {
+                System.out.println(infoCompletedCourses.get(i)+" is skipped in the first loop.");
+            }
         }
         //Loop adds elements to missingOnes, if they are contained only in allMandatoryCourses
         for (int j = 0; j < allMandatoryCourses.size(); j++){
-            if (infoCompletedCourses.contains(allMandatoryCourses.get(j))){
-                allMandatoryCourses.remove(j);
-                System.out.println(allMandatoryCourses.get(j)+" is removed in the second loop.");
+            if (completedMandatoryOnes.contains(allMandatoryCourses.get(j))){
+                System.out.println(allMandatoryCourses.get(j)+" is skipped in the second loop.");
             }
             else {
+                System.out.println(allMandatoryCourses.get(j)+" is added to missingOnes");
                 missingOnes.add(allMandatoryCourses.get(j));
             }
         }
