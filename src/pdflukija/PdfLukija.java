@@ -127,7 +127,8 @@ public class PdfLukija {
         PdfWriter.getInstance(doc, new FileOutputStream(fileName + ".pdf"));
         doc.open();
         Paragraph paragraphTitle = new Paragraph();
-        paragraphTitle.add("By studentnumber: "+getStudentNumber()+" the following courses are yet to complete.\n");
+        paragraphTitle.add("By studentnumber: "+getStudentNumber()+" the following courses are yet to complete.\n"
+                +"Courses are compared to study guide from year "+getStartingYear()+".");
         doc.add(paragraphTitle);
         Paragraph paragraph = new Paragraph();
         ArrayList list = getMissingCourses();
