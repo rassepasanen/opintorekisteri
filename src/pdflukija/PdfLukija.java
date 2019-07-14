@@ -72,11 +72,12 @@ public class PdfLukija {
             StudentGuideTemp.delete();
             //Parsing missing courses
             missingCourses = missingCourses(allMandatoryCourses,infoCompletedCourses);
-            missingCourses = getMissingCourses();
+            //missingCourses = getMissingCourses();
             System.out.println("Missing courses: " + missingCourses);
             
             //Creating PDF-file, by name of the student number, to report all missing courses
             createNewPdfFile(studentNumber);
+            System.out.println("Pdf-file created by the name of current student number.");
             }
         catch(Exception e){
             System.out.println(e + " Exeption.");
@@ -131,6 +132,9 @@ public class PdfLukija {
         doc.setPageSize(PageSize.A4);
         PdfWriter.getInstance(doc, new FileOutputStream(fileName + ".pdf"));
         doc.open();
+        Paragraph paragraphTitle = new Paragraph();
+        paragraphTitle.add("By studentnumber: "+getStudentNumber()+" the following courses are yet to complete.\n");
+        doc.add(paragraphTitle);
         Paragraph paragraph = new Paragraph();
         ArrayList list = getMissingCourses();
         int i = 0;
@@ -250,14 +254,34 @@ public class PdfLukija {
     * Comparement of ArrayLists to parse all mandatory courses that student is yet to complete
     */
     private ArrayList missingCourses(ArrayList allMandatoryCourses, ArrayList infoCompletedCourses){
-        //rivit 254 ja 255 voi kommentoida pois kun alkaa rakentamaan
-        allMandatoryCourses.retainAll(infoCompletedCourses);
-        setMissingCourses(allMandatoryCourses);
         /*
         * TODO
         * 1. infoCompletedCourses poistetaan ne, jotka ei kuulu allMandatoryCourses()
         * 2. allMandatoryCourses poistetaan infoCompletedCourses() jääneet alkiot, jolloin jäljelle jää suorittamattomat pakolliset
         */
-        return allMandatoryCourses;
+        //Loop deletes all but mandatory courses from infoCompletedCourses
+        ArrayList missingOnes = new ArrayList();
+        for (int i = 0; i < infoCompletedCourses.size(); i++){
+            if (allMandatoryCourses.contains(infoCompletedCourses.get(i))){
+                System.out.println(infoCompletedCourses.get(i)+" is found in both and leaved untouched");}
+            else {
+                System.out.println(infoCompletedCourses.get(i)+" is removed");
+                infoCompletedCourses.remove(i);
+                
+            }
+            //infoCompletedCOurses sisältää vain pakollisia suoritettuja kursseja
+        }
+        for (int j = 0; j < allMandatoryCourses.size(); j++){
+            if (infoCompletedCourses.contains(allMandatoryCourses.get(j))){
+                allMandatoryCourses.remove(j);
+                System.out.println(allMandatoryCourses.get(j)+" is removed in second loop.");
+            }
+            else {
+                missingOnes.add(allMandatoryCourses.get(j));
+            }
+        }
+        System.out.println("allMandatoryCourses: " + allMandatoryCourses);
+        System.out.println("missingOnes: "+ missingOnes);   
+	return missingOnes;
     }
 }
